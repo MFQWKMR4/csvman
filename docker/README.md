@@ -3,14 +3,15 @@
 ## ci
 This is for ci.
 
-First, build docker image.
+First, move the directory to '/csvman/docker/ci' .
+And, build docker image.
 ```
-
+$ docker build -t csvman_test:1.0 .
 ```
 
 Please run the following command.
 ```
-run.sh
+sh run.sh
 ```
 The tests will be executed on the container and output test-report.txt to report dir.
 
