@@ -3,10 +3,10 @@
 ## ci
 This is for ci.
 
-First, move the directory to '/csvman/docker/ci' .
+First, move the directory to './docker/ci' .
 And, build docker image.
 ```
-$ docker build -t csvman_test:1.0 .
+$ docker build -t csvman_test:1.1 .
 ```
 
 Please run the following command.
