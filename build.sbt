@@ -3,12 +3,15 @@ import Dependencies._
 ThisBuild / scalaVersion     := "2.12.13"
 ThisBuild / version          := "0.1.0-SNAPSHOT"
 ThisBuild / organization     := "com.example"
-ThisBuild / organizationName := "example"
+ThisBuild / organizationName := "core"
 
 lazy val root = (project in file("."))
   .settings(
     name := "csvman",
-    libraryDependencies += scalaTest % Test
+    libraryDependencies ++= Seq(
+      scalaTest % Test,
+      scalaCsv
+      )
   )
   .enablePlugins(ScalaNativePlugin)
 
