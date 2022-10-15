@@ -9,8 +9,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "csvman",
     libraryDependencies ++= Seq(
-      scalaTest % Test,
-      scalaCsv
+      scalaTest % Test
       )
   )
   .enablePlugins(ScalaNativePlugin)
