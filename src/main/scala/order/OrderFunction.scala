@@ -38,6 +38,16 @@ object OrderFunction {
     header :: updatedRawFields
   }
 
+  /**
+    * nothing to do
+    *
+    * @param csvList
+    * @return
+    */
+  def pass(csvList: List[List[String]]): List[List[String]] = {
+    csvList
+  }
+
   private def createDiffSeq(diffSeq: Seq[Int], numSeq: Seq[Int]): Seq[Int] = {
     numSeq match {
       case head +: second +: tail =>
