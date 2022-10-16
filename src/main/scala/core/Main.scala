@@ -1,16 +1,12 @@
 package core
 
-import common.Manipulator.toCliOpSeq
+import common.Manipulator._
+import common.Cli._
 
 object Main {
-  def main(args: Array[String]) = {
-    val cliOptions = toCliOpSeq(args)
-    cliOptions
-      .map { cliOption =>
-        val csvFilePathOpt = cliOption.getFilePathOpt(cliOptions)
-        cliOption.toCommand(csvFilePathOpt)
-      }
+
+  def main(args: Array[String]) =
+    (toCliOpSeq(args).map(_.toCommand) :+ WriteOut)
       .sortBy(_.priority)
       .foreach(_.exec)
-  }
 }
