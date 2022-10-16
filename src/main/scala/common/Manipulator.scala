@@ -8,9 +8,9 @@ import scala.io.Source
 
 object Manipulator {
 
-  var inputFilePath: String          = ""
-  var outputFilePath: Option[String] = None
-  var csvData: List[List[String]]    = _
+  private var inputFilePath: String          = ""
+  private var outputFilePath: Option[String] = None
+  private var csvData: List[List[String]]    = _
 
   abstract class Command {
     /* the order of command execution */
