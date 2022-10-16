@@ -67,7 +67,7 @@ object Manipulator {
   }
 
   /* default */
-  case class WriteOut() extends Command {
+  case object WriteOut extends Command {
 
     override val priority: Int = Int.MaxValue
 
