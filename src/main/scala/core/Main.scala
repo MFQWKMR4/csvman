@@ -1,9 +1,8 @@
 package core
 
-import common.Manipulator._
-import common.Cli._
+import common.Cli
 
-object Main {
+object Main extends Cli{
 
   def main(args: Array[String]) =
     (toCliOpSeq(args).map(_.toCommand) :+ WriteOut)
