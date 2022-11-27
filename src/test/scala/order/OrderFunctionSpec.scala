@@ -1,12 +1,13 @@
 package order
 
+import Helpers.ComponentRegistry
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
 
 class OrderFunctionSpec extends FlatSpec with Matchers with MockitoSugar {
 
   trait Fixture {
-    val orderFunction = new OrderFunction()
+    val orderFunction = ComponentRegistry.orderFunction
   }
 
   "sequentialInsert: the first two element of displayOrderList is empty" should "throw exception" in new Fixture {

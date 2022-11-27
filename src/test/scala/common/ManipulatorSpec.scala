@@ -1,5 +1,6 @@
 package common
 
+import Helpers.ComponentRegistry
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -9,7 +10,7 @@ class ManipulatorSpec extends FlatSpec with Matchers with MockitoSugar {
     val pwd: String = sys.env.getOrElse("PWD", "~/csvman")
     val readPath: String = pwd + "/files/sample1.csv"
     val writePath: String = pwd + "/files/sampleOut1.csv"
-    val manipulator = new Manipulator()
+    val manipulator: ComponentRegistry.Manipulator = ComponentRegistry.manipulator
   }
 
   "read csv file" should "success" in new Fixture {

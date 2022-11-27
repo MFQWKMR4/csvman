@@ -1,85 +1,93 @@
 package common
 
-import order.OrderFunction
+import order.OrderFunctionComponent
 import order.OrderValue._
 
 import java.io.{BufferedWriter, File, FileWriter}
 import scala.io.Source
 
-class Manipulator {
-  private[common] var inputFilePath: String = ""
-  private[common] var outputFilePath: Option[String] = None
-  private[common] var csvData: List[List[String]] = _
+trait ManipulatorComponent  {
+  this: OrderFunctionComponent =>
+  val manipulator: Manipulator
 
-  abstract class Command extends OrderFunction {
-    /* the order of command execution */
-    val priority: Int
+  class Manipulator {
 
-    /* command execution */
-    def exec: Unit
-  }
+    private[common] var inputFilePath: String = ""
+    private[common] var outputFilePath: Option[String] = None
+    private[common] var csvData: List[List[String]] = _
 
-  /* -s --source */
-  case class OptionF(value: String) extends Command {
+    abstract class Command {
+      /* the order of command execution */
+      val priority: Int
 
-    override val priority: Int = 0
+      /* command execution */
+      def exec: Unit
+    }
 
-    override def exec: Unit = {
-      inputFilePath = value
-      val src = Source.fromFile(value)
-      try {
-        csvData = src
-          .getLines()
-          .map(_.replace(",", ", ").split(",").toList)
-          .toList
-          .map(_.map(_.trim))
-        println(csvData)
+    /* -s --source */
+    case class OptionF(value: String) extends Command {
 
-      } finally {
-        src.close()
+      override val priority: Int = 0
+
+      override def exec: Unit = {
+        inputFilePath = value
+        val src = Source.fromFile(value)
+        try {
+          csvData = src
+            .getLines()
+            .map(_.replace(",", ", ").split(",").toList)
+            .toList
+            .map(_.map(_.trim))
+          println(csvData)
+
+        } finally {
+          src.close()
+        }
       }
     }
-  }
 
-  /* -d --destination */
-  case class OptionD(value: String) extends Command {
+    /* -d --destination */
+    case class OptionD(value: String) extends Command {
 
-    override val priority: Int = 1
+      override val priority: Int = 1
 
-    override def exec: Unit = {
-      outputFilePath = Some(value)
-    }
-  }
-
-  /* -o --order */
-  case class OptionO(value: String) extends Command {
-
-    override val priority: Int = 2
-
-    override def exec = {
-      value match {
-        case SequentialInsert.value =>
-          csvData = sequentialInsert(csvData)
-        case _ =>
-          csvData = pass(csvData)
+      override def exec: Unit = {
+        outputFilePath = Some(value)
+        println(outputFilePath)
       }
     }
-  }
 
-  /* default */
-  case object WriteOut extends Command {
+    /* -o --order */
+    case class OptionO(value: String) extends Command {
 
-    override val priority: Int = Int.MaxValue
+      override val priority: Int = 2
 
-    override def exec = {
-      val bufferedWriter = new BufferedWriter(
-        new FileWriter(new File(outputFilePath.getOrElse(inputFilePath)))
-      )
-      csvData.foreach { row =>
-        bufferedWriter.append(row.mkString(","))
-        bufferedWriter.newLine()
+      override def exec = {
+        value match {
+          case SequentialInsert.value =>
+            csvData = orderFunction.sequentialInsert(csvData)
+          case _ =>
+            csvData = orderFunction.pass(csvData)
+        }
+        println(outputFilePath)
       }
-      bufferedWriter.close()
+    }
+
+    /* default */
+    case object WriteOut extends Command {
+
+      override val priority: Int = Int.MaxValue
+
+      override def exec = {
+        val bufferedWriter = new BufferedWriter(
+          new FileWriter(new File(outputFilePath.getOrElse(inputFilePath)))
+        )
+        csvData.foreach { row =>
+          bufferedWriter.append(row.mkString(","))
+          bufferedWriter.newLine()
+        }
+        bufferedWriter.close()
+      }
     }
   }
 }

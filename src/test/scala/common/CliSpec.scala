@@ -1,5 +1,6 @@
 package common
 
+import Helpers.ComponentRegistry
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -9,8 +10,8 @@ class CliSpec extends FlatSpec with Matchers with MockitoSugar {
     val pwd: String = sys.env.getOrElse("PWD", "~/csvman")
     val readPath: String = pwd + "/files/sample1.csv"
     val writePath: String = pwd + "/files/sampleOut1.csv"
-    val cli = new Cli()
-    val manipulator: Manipulator = mock[Manipulator]
+    val cli: ComponentRegistry.Cli = ComponentRegistry.cli
+    val manipulator: ComponentRegistry.Manipulator = ComponentRegistry.manipulator
   }
 
   "Convert to cliOption sequence" should "success" in new Fixture {
@@ -31,7 +32,7 @@ class CliSpec extends FlatSpec with Matchers with MockitoSugar {
     val op: cli.Op = cli.Op("-s", readPath)
 
     // when
-    val command: cli.Command = op.toCommand
+    val command = op.toCommand
 
     // then
     command should be(manipulator.OptionF(readPath))

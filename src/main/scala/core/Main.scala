@@ -1,11 +1,12 @@
 package core
 
-import common.Cli
+import Helpers.ComponentRegistry
 
-object Main extends Cli{
+object Main {
 
   def main(args: Array[String]) =
-    (toCliOpSeq(args).map(_.toCommand) :+ WriteOut)
+    (ComponentRegistry.cli.toCliOpSeq(args).map(_.toCommand) :+ ComponentRegistry.manipulator.WriteOut)
       .sortBy(_.priority)
       .foreach(_.exec)
+
 }
