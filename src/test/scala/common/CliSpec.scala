@@ -10,7 +10,6 @@ class CliSpec extends FlatSpec with Matchers with MockitoSugar {
     val readPath: String = pwd + "/files/sample1.csv"
     val writePath: String = pwd + "/files/sampleOut1.csv"
     val cli = new Cli()
-    val manipulator: Manipulator = mock[Manipulator]
   }
 
   "Convert to cliOption sequence" should "success" in new Fixture {
@@ -24,17 +23,14 @@ class CliSpec extends FlatSpec with Matchers with MockitoSugar {
     toCliOpSeq should be(Seq(cli.Op("-s", readPath), cli.Op("-d", writePath), cli.Op("-o", "sequential_insert")))
   }
 
-  // REVIEW: 以下のテストは実際の結果と期待値は同じ値で返ってきているが失敗する。
-  //  該当箇所のプロダクトコードは複雑でないため、テストコードは書く必要もないかもしれない。
   "convert to OptionF" should "success" in new Fixture {
     // given
     val op: cli.Op = cli.Op("-s", readPath)
 
     // when
-    val command: cli.Command = op.toCommand
+    val command = op.toCommand
 
     // then
-    command should be(manipulator.OptionF(readPath))
+    command should be(cli.OptionF(readPath))
   }
-
 }
