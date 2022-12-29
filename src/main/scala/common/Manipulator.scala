@@ -11,7 +11,6 @@ class Manipulator {
   private[common] var outputFilePath: Option[String] = None
   private[common] var csvData: List[List[String]] = _
 
-//  abstract class Command extends OrderFunction {
     abstract class Command {
     /* the order of command execution */
     val priority: Int
@@ -40,16 +39,6 @@ class Manipulator {
         src.close()
       }
     }
-
-//    override def equals(other: Any) = {
-//      println("called!")
-//      println(other.getClass)
-//      other match {
-//        case OptionF(path) => value == path
-//        case a: common.Manipulator
-//        case _ => false
-//      }
-//    }
   }
 
   /* -d --destination */
