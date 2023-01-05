@@ -11,7 +11,7 @@ class Manipulator {
   private[common] var outputFilePath: Option[String] = None
   private[common] var csvData: List[List[String]] = _
 
-  abstract class Command extends OrderFunction {
+    abstract class Command {
     /* the order of command execution */
     val priority: Int
 
@@ -53,6 +53,7 @@ class Manipulator {
 
   /* -o --order */
   case class OptionO(value: String) extends Command {
+    import OptionO._
 
     override val priority: Int = 2
 
@@ -64,6 +65,12 @@ class Manipulator {
           csvData = pass(csvData)
       }
     }
+  }
+
+  object OptionO {
+    val a = new OrderFunction()
+    def sequentialInsert(d: List[List[String]]): List[List[String]] = a.sequentialInsert(d)
+    def pass(d: List[List[String]]): List[List[String]] = a.pass(d)
   }
 
   /* default */
