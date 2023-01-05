@@ -1,58 +1,43 @@
 package order
 
-import scala.math.abs
-
-object OrderFunction {
-  // Todo Refactoring
+class OrderFunction {
   def sequentialInsert(csvList: List[List[String]]): List[List[String]] = {
-    // immutableに変える
-    var list: Seq[Int] = Seq.empty
-    val (header, rawFields) = (csvList.head, csvList.tail)
+    val (header, rowFields) = (csvList.head, csvList.tail)
     val displayOrderIndex = header.indexOf("displayOrder")
 
-    rawFields.map { raw =>
-      raw.zipWithIndex.map {
-        case (cell, columnIndex) =>
-          if (columnIndex == displayOrderIndex) {
-            cell match {
-              case cell if cell.nonEmpty => list :+= cell.toInt
-              case cell if cell.isEmpty =>
-                require(list.length > 1, "Cannot calculate the difference.")
-                val diffSeq = createDiffSeq(Seq.empty, list)
-                if (diffSeq.forall(diffSeq.head == _)) {
-                  list :+= list.last + diffSeq.head
-                }
-                else {
-                  throw new Exception("Seq elements are not the same increment.")
-                }
-            }
-          }
+    val displayOrderList = rowFields.flatMap { row =>
+      row.zipWithIndex.filter { case (_, countIndex) => countIndex == displayOrderIndex }.map(_._1)
+    }
+
+    val nonEmptyList = displayOrderList.take(2)
+    require(nonEmptyList.forall(_.nonEmpty), "The first two element of displayOrderList require a value.")
+
+    def updateDisplayOrderList(ret: List[String], rest: List[String]): List[String] = {
+      rest match {
+        case Nil => ret
+        case h +: li if h.isEmpty =>
+          val diff = ret.last.toInt - ret(ret.length - 2).toInt
+          val updatedValue = ret.last.toInt + diff
+          updateDisplayOrderList(ret :+ updatedValue.toString, li)
+        case h +: li => updateDisplayOrderList(ret :+ h, li)
       }
     }
 
-    val updatedRawFields = rawFields.zipWithIndex.map { case (csvRaw, csvRawIndex) =>
-      val (_, i) = csvRaw.zipWithIndex.filter { case (_, csvColumnIndex) => csvColumnIndex == displayOrderIndex }.head
-      csvRaw.updated(i, list(csvRawIndex).toString)
+    val updatedDisplayOrderList = updateDisplayOrderList(List.empty, displayOrderList)
+
+    val updatedRowFields = rowFields.zipWithIndex.map { case (row, rowIndex) =>
+      row.zipWithIndex.map { case (column, columnIndex) =>
+        if (columnIndex == displayOrderIndex) {
+          updatedDisplayOrderList(rowIndex)
+        }
+        else column
+      }
     }
 
-    header :: updatedRawFields
+    header :: updatedRowFields
   }
 
-  /**
-    * nothing to do
-    *
-    * @param csvList
-    * @return
-    */
   def pass(csvList: List[List[String]]): List[List[String]] = {
     csvList
-  }
-
-  private def createDiffSeq(diffSeq: Seq[Int], numSeq: Seq[Int]): Seq[Int] = {
-    numSeq match {
-      case head +: second +: tail =>
-        createDiffSeq(diffSeq :+ abs(head - second), second +: tail)
-      case _ => diffSeq
-    }
   }
 }

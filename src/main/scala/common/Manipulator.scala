@@ -1,18 +1,17 @@
 package common
 
-import java.io.{ File, FileWriter, BufferedWriter }
-import order.OrderFunction._
+import order.OrderFunction
 import order.OrderValue._
 
+import java.io.{BufferedWriter, File, FileWriter}
 import scala.io.Source
 
-object Manipulator {
+class Manipulator {
+  private[common] var inputFilePath: String = ""
+  private[common] var outputFilePath: Option[String] = None
+  private[common] var csvData: List[List[String]] = _
 
-  private var inputFilePath: String          = ""
-  private var outputFilePath: Option[String] = None
-  private var csvData: List[List[String]]    = _
-
-  abstract class Command {
+    abstract class Command {
     /* the order of command execution */
     val priority: Int
 
@@ -31,9 +30,10 @@ object Manipulator {
       try {
         csvData = src
           .getLines()
-          .map(_.replace(",", ", ").split(", ").toList)
+          .map(_.replace(",", ", ").split(",").toList)
           .toList
           .map(_.map(_.trim))
+        println(csvData)
 
       } finally {
         src.close()
@@ -53,6 +53,7 @@ object Manipulator {
 
   /* -o --order */
   case class OptionO(value: String) extends Command {
+    import OptionO._
 
     override val priority: Int = 2
 
@@ -64,6 +65,12 @@ object Manipulator {
           csvData = pass(csvData)
       }
     }
+  }
+
+  object OptionO {
+    val a = new OrderFunction()
+    def sequentialInsert(d: List[List[String]]): List[List[String]] = a.sequentialInsert(d)
+    def pass(d: List[List[String]]): List[List[String]] = a.pass(d)
   }
 
   /* default */
@@ -83,3 +90,5 @@ object Manipulator {
     }
   }
 }
+
+
